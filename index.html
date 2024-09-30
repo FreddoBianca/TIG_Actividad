@@ -51,16 +51,21 @@
             attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
         }).addTo(map);
 
+            var argenmapIGNT = L.tileLayer('https://wms.ign.gob.ar/geoserver/mapabase_topo/gwc/service/wmts?request=GetCapabilities', {
+            attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
+
         var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenTopoMap contributors'
         });
 
             var layersControl = L.control.layers({
-            "Mapa Base": openStreetMap,
-            "Mapa Satelital (ESRI)": satelliteMap,
+            "Mapa base": openStreetMap,
+            "Mapa satelital (ESRI)": satelliteMap,
             "Mapa ligero (CartoDB)": positronMap,
             "ArgenMap (IGN)": argenmapIGN,
             "Mapa topográfico": topoMap,
+            "Mapa topográfico (IGN)": argenmapIGNT,
+                
         }).addTo(map);
 
         // Grupos de capas
