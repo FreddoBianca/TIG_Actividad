@@ -102,7 +102,7 @@
             { nombre: "Tartagal", coords: [-22.5373, -63.7834] }
         ];
 
-        // Función para crear un buffer de 200 kilómetros
+        // Función para crear un buffer de 100 kilómetros
         function crearBuffer(lat, lon, nombre) {
             var circle = L.circle([lat, lon], {
                 color: 'orange',
@@ -112,7 +112,7 @@
             }).addTo(map);
 
             // Añadir texto al círculo
-            circle.bindPopup("Área de Influencia de " + nombre + "<br>200 km");
+            circle.bindPopup("Área de Influencia de " + nombre + "<br>100 km");
         }
 
         // Añadir marcadores y áreas de influencia al mapa
@@ -135,6 +135,9 @@
             secondaryAreaUnit: 'ares'
         });
         map.addControl(measureControl);
+         // Añadir los grupos de marcadores y buffers al control de capas
+        layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
+        layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
     </script>
 
 </body>
