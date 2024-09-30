@@ -11,7 +11,8 @@
             height: 600px;
             width: 100%;
         }
-        #downloadButton {
+        .download-button {
+            display: block;
             margin-top: 10px;
         }
     </style>
@@ -26,7 +27,6 @@
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
 
     <div id="map"></div>
-    <button id="downloadButton">Descargar información en GeoJSON</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
@@ -84,7 +84,6 @@
             { nombre: "La Rioja, La Rioja", coords: [-29.4103, -66.8508] },
             { nombre: "Córdoba, Córdoba", coords: [-31.4201, -64.1888] },
             { nombre: "Santa Fe, Santa Fe", coords: [-31.6333, -60.7000] }
-            // Puedes agregar más capitales aquí
         ];
 
         // Función para crear un buffer de 100 kilómetros
@@ -102,7 +101,12 @@
         }
 
         // Crear los datos en formato GeoJSON
-        var geojsonData = {
+        var geojsonMarcadores = {
+            type: "FeatureCollection",
+            features: []
+        };
+
+        var geojsonBuffers = {
             type: "FeatureCollection",
             features: []
         };
@@ -118,8 +122,8 @@
 
             marcadorLayerGroup.addLayer(marker);
 
-            // Agregar los datos del marcador y del buffer al GeoJSON
-            geojsonData.features.push({
+            // Agregar los datos del marcador y del buffer al GeoJSON correspondiente
+            geojsonMarcadores.features.push({
                 type: "Feature",
                 properties: {
                     name: capital.nombre,
@@ -131,7 +135,7 @@
                 }
             });
 
-            geojsonData.features.push({
+            geojsonBuffers.features.push({
                 type: "Feature",
                 properties: {
                     name: "Área de influencia de " + capital.nombre,
@@ -155,19 +159,33 @@
         map.addControl(measureControl);
 
         // Función para descargar el archivo GeoJSON
-        function descargarGeoJSON() {
-            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData));
+        function descargarGeoJSON(data, nombreArchivo) {
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
             var downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "capitales_provincias.geojson");
+            downloadAnchorNode.setAttribute("download", nombreArchivo + ".geojson");
             document.body.appendChild(downloadAnchorNode); // Requerido para Firefox
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
         }
 
-        // Vincular la función al botón de descarga
-        document.getElementById("downloadButton").addEventListener("click", descargarGeoJSON);
+        // Crear botones de descarga en el control de capas
+        var downloadButtonMarcadores = L.control({position: 'topright'});
+        downloadButtonMarcadores.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'download-button');
+            div.innerHTML = '<button onclick="descargarGeoJSON(geojsonMarcadores, \'capitales_provinciales\')">Descargar Capitales</button>';
+            return div;
+        };
+        downloadButtonMarcadores.addTo(map);
+
+        var downloadButtonBuffers = L.control({position: 'topright'});
+        downloadButtonBuffers.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'download-button');
+            div.innerHTML = '<button onclick="descargarGeoJSON(geojsonBuffers, \'areas_influencia\')">Descargar Buffers</button>';
+            return div;
+        };
+        downloadButtonBuffers.addTo(map);
+
     </script>
-</body>
-</html>
+</
 
