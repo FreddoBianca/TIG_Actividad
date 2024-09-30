@@ -49,18 +49,25 @@
     });
 
            // ARGENMAP (IGN) usando servicio WMS del Instituto Geográfico Nacional de Argentina
-    var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/argenmap/gwc/service/wms?', {
+    var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/mapabase_gris@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
         layers: 'argenmap',
         format: 'image/png',
         transparent: false,
         attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
         });
 
-        var layersControl = L.control.layers({
+        // OpenTopoMap (mapa topográfico)
+    var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenTopoMap contributors'
+    });
+
+                var layersControl = L.control.layers({
             "Mapa Base": openStreetMap,
             "Mapa Satelital": satelliteMap,
-            "Mapa Topográfico (CartoDB Positron)": positronMap,
-             "ARGENMAP (IGN)": argenmapIGN
+            "Mapa ligero (CartoDB)": positronMap,
+             "ArgenMap (IGN)": argenmapIGN
+            "Mapa topográfico":topoMap
+        });
         
         }).addTo(map);
 
