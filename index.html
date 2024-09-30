@@ -56,7 +56,7 @@
             attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
         }).addTo(map);
 
-        var topoMap = L.tileLayer('https://wms.ign.gob.ar/geoserver/mapabase_topo/gwc/service/wmts?request=GetCapabilities', {
+        var topoMap = L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/mapabase_topo@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
             attribution: '© OpenTopoMap contributors'
         });
 
