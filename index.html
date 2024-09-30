@@ -27,8 +27,7 @@
     <h2 style="color: blue; font-style: italic;">Actividad: Geoprocesos con IA - área de influencia / buffer</h2>
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
     
-    <button id="download-btn">Descargar GeoJSON</button> <!-- Botón de descarga -->
-    <div id="map"></div>
+    
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
@@ -73,6 +72,9 @@
         // Grupos de capas
         var marcadorLayerGroup = L.layerGroup().addTo(map);
         var bufferLayerGroup = L.layerGroup().addTo(map);
+
+        <button id="download-btn">Descargar GeoJSON</button> <!-- Botón de descarga -->
+    <div id="map"></div>
 
         // Coordenadas de las capitales
         var capitales = [
