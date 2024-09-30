@@ -73,10 +73,7 @@
         var marcadorLayerGroup = L.layerGroup().addTo(map);
         var bufferLayerGroup = L.layerGroup().addTo(map);
 
-        <button id="download-btn">Descargar Capitales</button> <!-- Botón de descarga -->
-    <div id="map"></div>
-
-        // Coordenadas de las capitales
+                // Coordenadas de las capitales
         var capitales = [
             { nombre: "La Plata", coords: [-34.9214, -57.9535] },
             { nombre: "San Fernando del Valle de Catamarca", coords: [-28.4706, -65.7795] },
@@ -102,7 +99,8 @@
             { nombre: "Santa Rosa La Pampa", coords: [-36.6236, -64.2946] },
             { nombre: "San Luis", coords: [-33.2943, -66.3298] },
         ];
-
+<button id="download-btn">Descargar Capitales</button> <!-- Botón de descarga -->
+    <div id="map"></div>
         // Función para crear un buffer de 100 kilómetros
         function crearBuffer(lat, lon, nombre) {
             var circle = L.circle([lat, lon], {
