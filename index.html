@@ -11,6 +11,9 @@
             height: 600px;
             width: 100%;
         }
+        #downloadButton {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -21,7 +24,9 @@
     <h2>Las capitales de las provincias Argentinas</h2>
     <h2 style="color: blue; font-style: italic;">Actividad: Geoprocesos con IA - área de influencia / buffer</h2>
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
+
     <div id="map"></div>
+    <button id="downloadButton">Descargar información en GeoJSON</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
@@ -33,7 +38,7 @@
         var openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
-        });
+        }).addTo(map);
 
         var satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 17,
@@ -49,7 +54,7 @@
             format: 'image/png',
             transparent: false,
             attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
-        }).addTo(map);
+        });
 
         var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenTopoMap contributors'
@@ -69,7 +74,6 @@
 
         // Coordenadas de las capitales
         var capitales = [
-           // { nombre: "Buenos Aires", coords: [-34.6075, -58.3816] },
             { nombre: "Buenos Aires, La Plata", coords: [-34.9214, -57.9535] },
             { nombre: "Catamarca, San Fernando del Valle de Catamarca", coords: [-28.4706, -65.7795] },
             { nombre: "San Juan, San Juan", coords: [-31.5372, -68.5360] },
@@ -79,27 +83,8 @@
             { nombre: "Santiago del Estero, Santiago del Estero", coords: [-27.7902, -64.2618] },
             { nombre: "La Rioja, La Rioja", coords: [-29.4103, -66.8508] },
             { nombre: "Córdoba, Córdoba", coords: [-31.4201, -64.1888] },
-            { nombre: "Santa Fe, Santa Fe", coords: [-31.6333, -60.7000] },
-            { nombre: "Corrientes, Corrientes", coords: [-27.4800, -58.8345] },
-            { nombre: "Misiones, Posadas", coords: [-27.3656, -55.8830] },
-            { nombre: "Formosa, Formosa", coords: [-26.1716, -58.1813] },
-            { nombre: "Chaco, Resistencia", coords: [-27.4512, -58.9860] },
-            { nombre: "Entre Ríos, Paraná", coords: [-31.7368, -60.5175] },
-            { nombre: "Salta, Salta", coords: [-24.7820, -65.4117] },
-            { nombre: "Jujuy, San Salvador de Jujuy", coords: [-24.1854, -65.2999] },
-            { nombre: "Santa Cruz, Rio Gallegos", coords: [-51.6250, -69.2181] },
-            { nombre: "Tierra del Fuego, Ushuaia", coords: [-54.8019, -68.3030] },
-            { nombre: "Río Negro, Viedma", coords: [-40.8101, -62.9966] },
-           // { nombre: "San Carlos de Bariloche", coords: [-41.1335, -71.3103] },
-            { nombre: "Chubut, Rawson", coords: [-43.3002, -65.1004] },
-           //{ nombre: "Trelew", coords: [-43.2506, -65.3019] },
-          //{ nombre: "Comodoro Rivadavia", coords: [-45.8651, -67.4804] },
-          //{ nombre: "Tartagal", coords: [-22.5373, -63.7834] },
-            { nombre: "La Pampa, Santa Rosa", coords: [-36.6236, -64.2946] },
-             { nombre: "San Luis, San Luis", coords: [-33.2943, -66.3298] },
-            
-            
-            
+            { nombre: "Santa Fe, Santa Fe", coords: [-31.6333, -60.7000] }
+            // Puedes agregar más capitales aquí
         ];
 
         // Función para crear un buffer de 100 kilómetros
@@ -113,18 +98,47 @@
 
             // Añadir texto al círculo
             circle.bindPopup("Área de Influencia de " + nombre + "<br>100 km");
+            return circle;
         }
+
+        // Crear los datos en formato GeoJSON
+        var geojsonData = {
+            type: "FeatureCollection",
+            features: []
+        };
 
         // Añadir marcadores y áreas de influencia al mapa
         capitales.forEach(function(capital) {
-            // Crear el buffer
-            crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
+            // Crear el buffer y añadirlo al geojson
+            var buffer = crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
 
             // Añadir un marcador al grupo de capas de marcadores
             var marker = L.marker([capital.coords[0], capital.coords[1]])
                 .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km");
 
             marcadorLayerGroup.addLayer(marker);
+
+            // Agregar los datos del marcador y del buffer al GeoJSON
+            geojsonData.features.push({
+                type: "Feature",
+                properties: {
+                    name: capital.nombre,
+                    type: "Capital"
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [capital.coords[1], capital.coords[0]]
+                }
+            });
+
+            geojsonData.features.push({
+                type: "Feature",
+                properties: {
+                    name: "Área de influencia de " + capital.nombre,
+                    type: "Buffer"
+                },
+                geometry: buffer.toGeoJSON().geometry
+            });
         });
 
         // Añadir los grupos de marcadores y buffers al control de capas
@@ -139,6 +153,20 @@
             secondaryAreaUnit: 'ares'
         });
         map.addControl(measureControl);
+
+        // Función para descargar el archivo GeoJSON
+        function descargarGeoJSON() {
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData));
+            var downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "capitales_provincias.geojson");
+            document.body.appendChild(downloadAnchorNode); // Requerido para Firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // Vincular la función al botón de descarga
+        document.getElementById("downloadButton").addEventListener("click", descargarGeoJSON);
     </script>
 </body>
 </html>
