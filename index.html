@@ -127,6 +127,25 @@
                 .openPopup();
         });
 
+        // Añadir marcadores y áreas de influencia al mapa
+        capitales.forEach(function(capital) {
+            // Crear el buffer
+            crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
+
+            // Añadir un marcador
+            L.marker([capital.coords[0], capital.coords[1]])
+                .addTo(marcadorLayerGroup)
+                .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km");
+        });
+
+        // Añadir los grupos de marcadores y buffers al mapa
+        marcadorLayerGroup.addTo(map);
+        bufferLayerGroup.addTo(map);
+
+        // Añadir los grupos de marcadores y buffers al control de capas
+        layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
+        layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
+
         // Añadir la herramienta de medición
         var measureControl = new L.Control.Measure({
             primaryLengthUnit: 'kilometers',
@@ -135,10 +154,7 @@
             secondaryAreaUnit: 'ares'
         });
         map.addControl(measureControl);
-         // Añadir los grupos de marcadores y buffers al control de capas
-        layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
-        layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
-    </script>
+         </script>
 
 </body>
 </html>
