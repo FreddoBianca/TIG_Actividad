@@ -126,7 +126,7 @@
 
         // Añadir marcadores y áreas de influencia al mapa
         capitales.forEach(function(capital) {
-            // Crear el buffer y añadirlo al geojson
+            // Crear el buffer y añadirlo al mapa
             var buffer = crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
 
             // Añadir un marcador al grupo de capas de marcadores
@@ -135,7 +135,7 @@
 
             marcadorLayerGroup.addLayer(marker);
 
-            // Agregar los datos del marcador y del buffer al GeoJSON correspondiente
+            // Agregar los datos del marcador al GeoJSON correspondiente
             geojsonMarcadores.features.push({
                 type: "Feature",
                 properties: {
@@ -144,32 +144,29 @@
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [capital.coords[1], capital.coords[0]]
+                    coordinates: [capital.coords[1], capital.coords[0]] // Latitud y Longitud invertidas
                 }
             });
 
+            // Generar el polígono del buffer
             geojsonBuffers.features.push({
                 type: "Feature",
                 properties: {
                     name: "Área de influencia de " + capital.nombre,
                     type: "Buffer"
                 },
-                geometry: buffer.toGeoJSON().geometry
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [buffer.getLatLngs()[0].map(function(latlng) {
+                        return [latlng.lng, latlng.lat]; // Invertir latitud y longitud
+                    })]
+                }
             });
         });
 
         // Añadir los grupos de marcadores y buffers al control de capas
         layersControl.addOverlay(marcadorLayerGroup, "Capitales provinciales");
         layersControl.addOverlay(bufferLayerGroup, "Área de Influencia (100 km)");
-
-        // Añadir la herramienta de medición
-        var measureControl = new L.Control.Measure({
-            primaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'hectares',
-            secondaryLengthUnit: 'meters',
-            secondaryAreaUnit: 'ares'
-        });
-        map.addControl(measureControl);
 
         // Función para descargar el archivo GeoJSON
         function descargarGeoJSON(data, nombreArchivo) {
@@ -198,7 +195,8 @@
             return div;
         };
         downloadButtonBuffers.addTo(map);
-
     </script>
 </body>
+</html>
+
 </html>
