@@ -23,8 +23,6 @@
     <h2 style="color: blue; font-style: italic;">Actividad:Geoprocesos con IA - área de influencia / buffer</h2>
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
     <div id="map"></div>
-  
- 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
@@ -43,34 +41,32 @@
             attribution: '© OpenTopoMap'
         });
 
-        // CartoDB Positron (mapa ligero estilo "Positron")
-    var positronMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© CartoDB'
-    });
-
-           // ARGENMAP (IGN) usando servicio WMS del Instituto Geográfico Nacional de Argentina
-    var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/mapabase_gris@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
-        layers: 'argenmap',
-        format: 'image/png',
-        transparent: false,
-        attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
+        var positronMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© CartoDB'
         });
 
-        // OpenTopoMap (mapa topográfico)
-    var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenTopoMap contributors'
-    });
+        var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/mapabase_gris@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
+            layers: 'argenmap',
+            format: 'image/png',
+            transparent: false,
+            attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
+        });
 
-                var layersControl = L.control.layers({
+        var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenTopoMap contributors'
+        });
+
+        var layersControl = L.control.layers({
             "Mapa Base": openStreetMap,
             "Mapa Satelital (ESRI)": satelliteMap,
             "Mapa ligero (CartoDB)": positronMap,
-             "ArgenMap (IGN)": argenmapIGN,
-            "Mapa topográfico":topoMap
-         
+            "ArgenMap (IGN)": argenmapIGN,
+            "Mapa topográfico": topoMap
         }).addTo(map);
 
-     
+        // Grupos de capas
+        var marcadorLayerGroup = L.layerGroup();
+        var bufferLayerGroup = L.layerGroup();
 
         // Coordenadas de las capitales
         var capitales = [
@@ -109,7 +105,10 @@
                 fillColor: 'orange',
                 fillOpacity: 0.5,
                 radius: 100000 // 100 kilómetros en metros
-            }).addTo(map);
+            });
+
+            // Añadir el círculo al grupo de capas de buffers
+            bufferLayerGroup.addLayer(circle);
 
             // Añadir texto al círculo
             circle.bindPopup("Área de Influencia de " + nombre + "<br>100 km");
@@ -120,22 +119,11 @@
             // Crear el buffer
             crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
 
-            // Añadir un marcador
-            L.marker([capital.coords[0], capital.coords[1]])
-                .addTo(map)
-                .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km")
-                .openPopup();
-        });
-
-        // Añadir marcadores y áreas de influencia al mapa
-        capitales.forEach(function(capital) {
-            // Crear el buffer
-            crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
-
-            // Añadir un marcador
-            L.marker([capital.coords[0], capital.coords[1]])
-                .addTo(marcadorLayerGroup)
+            // Añadir un marcador al grupo de capas de marcadores
+            var marker = L.marker([capital.coords[0], capital.coords[1]])
                 .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km");
+
+            marcadorLayerGroup.addLayer(marker);
         });
 
         // Añadir los grupos de marcadores y buffers al mapa
@@ -151,12 +139,6 @@
             primaryLengthUnit: 'kilometers',
             primaryAreaUnit: 'hectares',
             secondaryLengthUnit: 'meters',
-            secondaryAreaUnit: 'ares'
-        });
-        map.addControl(measureControl);
-         </script>
-
-</body>
-</html>
+            secondaryArea
 
 
