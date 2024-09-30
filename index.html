@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Capitales de Provincias Argentinas</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-distance/dist/leaflet-control-distance.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-measure/dist/leaflet-measure.css" />
     <style>
         #map {
             height: 600px;
@@ -33,112 +33,40 @@
         var openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
-        });
-
-        var satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 17,
-            attribution: '© OpenTopoMap'
-        });
-
-        var positronMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© CartoDB'
-        });
-
-        var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/mapabase_gris@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
-            layers: 'argenmap',
-            format: 'image/png',
-            transparent: false,
-            attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
         }).addTo(map);
-
-        var topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenTopoMap contributors'
-        });
-
-        var layersControl = L.control.layers({
-            "Mapa Base": openStreetMap,
-            "Mapa Satelital (ESRI)": satelliteMap,
-            "Mapa ligero (CartoDB)": positronMap,
-            "ArgenMap (IGN)": argenmapIGN,
-            "Mapa topográfico": topoMap
-        }).addTo(map);
-
-        // Grupos de capas
-        var marcadorLayerGroup = L.layerGroup().addTo(map);
-        var bufferLayerGroup = L.layerGroup().addTo(map);
 
         // Coordenadas de las capitales
         var capitales = [
-           // { nombre: "Buenos Aires", coords: [-34.6075, -58.3816] },
             { nombre: "La Plata", coords: [-34.9214, -57.9535] },
             { nombre: "San Fernando del Valle de Catamarca", coords: [-28.4706, -65.7795] },
             { nombre: "San Juan", coords: [-31.5372, -68.5360] },
             { nombre: "Mendoza", coords: [-32.8895, -68.8272] },
             { nombre: "Neuquén", coords: [-38.9516, -68.0592] },
             { nombre: "San Miguel de Tucumán", coords: [-26.8043, -65.2175] },
-            { nombre: "Santiago del Estero", coords: [-27.7902, -64.2618] },
-            { nombre: "La Rioja", coords: [-29.4103, -66.8508] },
-            { nombre: "Córdoba", coords: [-31.4201, -64.1888] },
-            { nombre: "Santa Fe", coords: [-31.6333, -60.7000] },
-            { nombre: "Corrientes", coords: [-27.4800, -58.8345] },
-            { nombre: "Posadas", coords: [-27.3656, -55.8830] },
-            { nombre: "Formosa", coords: [-26.1716, -58.1813] },
-            { nombre: "Resistencia", coords: [-27.4512, -58.9860] },
-            { nombre: "Paraná", coords: [-31.7368, -60.5175] },
-            { nombre: "Salta", coords: [-24.7820, -65.4117] },
-            { nombre: "San Salvador de Jujuy", coords: [-24.1854, -65.2999] },
-            { nombre: "Rio Gallegos", coords: [-51.6250, -69.2181] },
-            { nombre: "Ushuaia", coords: [-54.8019, -68.3030] },
-            { nombre: "Viedma", coords: [-40.8101, -62.9966] },
-           // { nombre: "San Carlos de Bariloche", coords: [-41.1335, -71.3103] },
-            { nombre: "Rawson", coords: [-43.3002, -65.1004] },
-           //{ nombre: "Trelew", coords: [-43.2506, -65.3019] },
-          //{ nombre: "Comodoro Rivadavia", coords: [-45.8651, -67.4804] },
-          //{ nombre: "Tartagal", coords: [-22.5373, -63.7834] },
-            { nombre: "Santa Rosa La Pampa", coords: [-36.6236, -64.2946] },
-             { nombre: "San Luis", coords: [-33.2943, -66.3298] },
-            
-            
-            
         ];
 
-        // Función para crear un buffer de 100 kilómetros
-        function crearBuffer(lat, lon, nombre) {
-            var circle = L.circle([lat, lon], {
-                color: 'orange',
-                fillColor: 'orange',
-                fillOpacity: 0.5,
-                radius: 100000 // 100 kilómetros en metros
-            }).addTo(bufferLayerGroup); // Añadir el círculo al grupo de capas de buffers
-
-            // Añadir texto al círculo
-            circle.bindPopup("Área de Influencia de " + nombre + "<br>100 km");
-        }
-
-        // Añadir marcadores y áreas de influencia al mapa
+        // Añadir marcadores
         capitales.forEach(function(capital) {
-            // Crear el buffer
-            crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
-
-            // Añadir un marcador al grupo de capas de marcadores
-            var marker = L.marker([capital.coords[0], capital.coords[1]])
-                .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km");
-
-            marcadorLayerGroup.addLayer(marker);
+            var marker = L.marker(capital.coords)
+                .bindPopup(capital.nombre)
+                .addTo(map);
         });
 
-        // Añadir los grupos de marcadores y buffers al control de capas
-        layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
-        layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
-
-         // Añadir la herramienta de medición (Leaflet.Control.Distance)
-        var distanceControl = L.control.distance({
+        // Añadir la herramienta de medición
+        var measureControl = new L.Control.Measure({
             position: 'topleft',
-            units: 'metric',
-            activeColor: 'red',
-            completedColor: 'green',
             primaryLengthUnit: 'kilometers',
-        }).addTo(map);
-       </script>
+            secondaryLengthUnit: 'meters',
+            primaryAreaUnit: 'hectares',
+            secondaryAreaUnit: 'sqmeters',
+            activeColor: '#ABE67E',
+            completedColor: '#C8F2BE'
+        });
+
+        // Añadir control de medición al mapa
+        map.addControl(measureControl);
+
+    </script>
 </body>
 </html>
+
