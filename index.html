@@ -55,21 +55,12 @@
             attribution: '© OpenTopoMap contributors'
         });
 
-        // Capa de rutas nacionales (usando un servicio WMS)
-        var rutasNacionales = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=ign%3Avial_nacional', {
-            layers: 'Red vial nacional',
-            format: 'image/png',
-            transparent: true,
-            attribution: 'Rutas Nacionales © Instituto Geográfico Nacional (IGN)'
-        });
-
-        var layersControl = L.control.layers({
+            var layersControl = L.control.layers({
             "Mapa Base": openStreetMap,
             "Mapa Satelital (ESRI)": satelliteMap,
             "Mapa ligero (CartoDB)": positronMap,
             "ArgenMap (IGN)": argenmapIGN,
             "Mapa topográfico": topoMap,
-            "Rutas Nacionales": rutasNacionales
         }).addTo(map);
 
         // Grupos de capas
@@ -141,8 +132,7 @@
         });
         map.addControl(measureControl);
 
-        // Agregar las capas de rutas nacionales al mapa
-        rutasNacionales.addTo(map);
+       
     </script>
 </body>
 </html>
