@@ -56,7 +56,7 @@
         });
 
         // Capa de rutas nacionales (usando un servicio WMS)
-        var rutasNacionales = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities', {
+        var rutasNacionales = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=ign%3Avial_nacional', {
             layers: 'Red vial nacional',
             format: 'image/png',
             transparent: true,
