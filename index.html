@@ -131,6 +131,39 @@
         layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
         layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
 
+        
+        // Función para generar el GeoJSON
+        function generarGeoJSON() {
+            var geojson = {
+                "type": "FeatureCollection",
+                "features": capitales.map(function(capital) {
+                    return {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [capital.coords[1], capital.coords[0]] // [lon, lat]
+                        },
+                        "properties": {
+                            "nombre": capital.nombre,
+                        }
+                    };
+                })
+            };
+
+            return JSON.stringify(geojson);
+        }
+
+        // Manejar el evento de clic del botón de descarga
+        document.getElementById('download-btn').addEventListener('click', function() {
+            var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(generarGeoJSON());
+            var downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute('href', dataStr);
+            downloadAnchorNode.setAttribute('download', 'capitales_argentinas.geojson');
+            document.body.appendChild(downloadAnchorNode); // Requerido para Firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        });
+
         // Añadir la herramienta de medición
         var measureControl = new L.Control.Measure({
             primaryLengthUnit: 'kilometers',
