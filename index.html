@@ -70,6 +70,9 @@
             "Mapa topográfico (IGN)": topoMap
         }).addTo(map);
 
+         // Añadir la escala gráfica
+        L.control.scale().addTo(map);  // Añadir la escala gráfica
+
         // Grupos de capas
         var marcadorLayerGroup = L.layerGroup().addTo(map);
         var bufferLayerGroup = L.layerGroup().addTo(map);
