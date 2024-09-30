@@ -27,7 +27,8 @@
     <h2 style="color: blue; font-style: italic;">Actividad: Geoprocesos con IA - área de influencia / buffer</h2>
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
     
-    
+        <button id="download-btn">Descargar Capitales</button> <!-- Botón de descarga -->
+    <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
@@ -168,10 +169,7 @@
             secondaryLengthUnit: 'meters',
             secondaryAreaUnit: 'ares'
         });
-        map.addControl(measureControl);
-
-        <button id="download-btn">Descargar Capitales</button> <!-- Botón de descarga -->
-    <div id="map"></div>
+        map.addControl(measureControl);    
     </script>
 </body>
 </html>
