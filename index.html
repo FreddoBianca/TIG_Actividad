@@ -43,10 +43,27 @@
             attribution: '© OpenTopoMap'
         });
 
+        // CartoDB Positron (mapa ligero estilo "Positron")
+    var positronMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CartoDB'
+    });
+
+           // ARGENMAP (IGN) usando servicio WMS del Instituto Geográfico Nacional de Argentina
+    var argenmapIGN = L.tileLayer.wms('https://wms.ign.gob.ar/geoserver/argenmap/gwc/service/wms?', {
+        layers: 'argenmap',
+        format: 'image/png',
+        transparent: false,
+        attribution: 'Mapa base © Instituto Geográfico Nacional (IGN)'
+
         var layersControl = L.control.layers({
             "Mapa Base": openStreetMap,
-            "Mapa Satelital": satelliteMap
+            "Mapa Satelital": satelliteMap,
+            "Mapa Topográfico (CartoDB Positron)": positronMap,
+             "ARGENMAP (IGN)": argenmapIGN
+        
         }).addTo(map);
+
+     
 
         // Coordenadas de las capitales
         var capitales = [
