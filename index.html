@@ -16,9 +16,8 @@
 <body>
     <img src="Logo UNPSJB.png" alt="Logo UNPSJB" width="25%" height="25%">
     <h2>DEFENDEMOS LA EDUCACIÓN PÚBLICA</h2>   
-    
     <h2>Tecnologías de la Información Geoespacial</h2>
-    <h2>Unidad II. Sistemas de Información Geografica (SIG)</h2>
+    <h2>Unidad II. Sistemas de Información Geográfica (SIG)</h2>
     <h2>Las capitales de las provincias Argentinas</h2>
     <h2 style="color: blue; font-style: italic;">Actividad: Geoprocesos con IA - área de influencia / buffer</h2>
     <h4 style="font-style: italic;">Mg. Bianca Vanesa Freddo - bvfreddo@fhcs.unp.edu.ar</h4>
@@ -56,7 +55,6 @@
             attribution: '© OpenTopoMap contributors'
         });
 
-        // Control de capas base
         var layersControl = L.control.layers({
             "Mapa Base": openStreetMap,
             "Mapa Satelital (ESRI)": satelliteMap,
@@ -106,10 +104,7 @@
                 fillColor: 'orange',
                 fillOpacity: 0.5,
                 radius: 100000 // 100 kilómetros en metros
-            });
-
-            // Añadir el círculo al grupo de capas de buffers
-            bufferLayerGroup.addLayer(circle);
+            }).addTo(bufferLayerGroup); // Añadir el círculo al grupo de capas de buffers
 
             // Añadir texto al círculo
             circle.bindPopup("Área de Influencia de " + nombre + "<br>100 km");
@@ -120,20 +115,16 @@
             // Crear el buffer
             crearBuffer(capital.coords[0], capital.coords[1], capital.nombre);
 
-            // Añadir un marcador
+            // Añadir un marcador al grupo de capas de marcadores
             var marker = L.marker([capital.coords[0], capital.coords[1]])
                 .bindPopup(capital.nombre + "<br>Área de Influencia: 100 km");
+
             marcadorLayerGroup.addLayer(marker);
         });
 
         // Añadir los grupos de marcadores y buffers al control de capas
         layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
         layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
-
-        // Control para los puntos y polígonos
-        var pointsAndPolygonsControl = L.control.layers({}, {}, { collapsed: false }).addTo(map);
-        pointsAndPolygonsControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
-        pointsAndPolygonsControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
 
         // Añadir la herramienta de medición
         var measureControl = new L.Control.Measure({
