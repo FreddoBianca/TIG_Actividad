@@ -131,14 +131,14 @@
         layersControl.addOverlay(marcadorLayerGroup, "Capitales (Marcadores)");
         layersControl.addOverlay(bufferLayerGroup, "Áreas de Influencia (Buffers)");
 
-        // Añadir la herramienta de medición
-        var measureControl = new L.Control.Measure({
+         // Añadir la herramienta de medición (Leaflet.Control.Distance)
+        var distanceControl = L.control.distance({
+            position: 'topleft',
+            units: 'metric',
+            activeColor: 'red',
+            completedColor: 'green',
             primaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'hectares',
-            secondaryLengthUnit: 'meters',
-            secondaryAreaUnit: 'ares'
-        });
-        map.addControl(measureControl);
-    </script>
+        }).addTo(map);
+       </script>
 </body>
 </html>
